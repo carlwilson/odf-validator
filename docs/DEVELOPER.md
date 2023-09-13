@@ -18,13 +18,13 @@ For now the Maven artefacts are hosted on the OPF's artifactory server. To use t
           </snapshots>
           <id>central</id>
           <name>opf-dev</name>
-          <url>http://artifactory.openpreservation.org/artifactory/opf-dev</url>
+          <url>https://artifactory.openpreservation.org/artifactory/opf-dev</url>
         </repository>
         <repository>
           <snapshots />
           <id>snapshots</id>
           <name>opf-dev</name>
-          <url>http://artifactory.openpreservation.org/artifactory/opf-dev</url>
+          <url>https://artifactory.openpreservation.org/artifactory/opf-dev</url>
         </repository>
       </repositories>
       <id>artifactory</id>
