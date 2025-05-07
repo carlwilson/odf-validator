@@ -32,8 +32,8 @@ jobs:
         id: pom-version
         uses: PERES-Richard/maven-get-version-action@v3.0.0
         env:
-          JAVA_HOME: $JAVA_HOME
-          JAVA_HOME_11_X64: $JAVA_HOME_11_X64
+          JAVA_HOME: /opt/java/openjdk
+          JAVA_HOME_11_X64: /opt/java/openjdk
     
   
       - name: "Package using Maven"
