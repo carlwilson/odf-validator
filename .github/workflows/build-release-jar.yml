@@ -41,7 +41,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: "odf-validator-${{ needs.release_details.outputs.version }}-all.jar"
-          path: odf-apps/target/odf-apps-${{ steps.pom-version.outputs.version }}-jar-with-dependencies.jar
+          path: "odf-apps/target/odf-apps-${{ steps.pom-version.outputs.version }}-jar-with-dependencies.jar"
 
       - name: "Upload release binaries"
         uses: svenstaro/upload-release-action@v2
