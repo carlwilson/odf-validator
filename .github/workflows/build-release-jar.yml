@@ -30,11 +30,8 @@ jobs:
 
       - name: "Get Maven POM version"
         id: pom-version
-        uses: PERES-Richard/maven-get-version-action@v3.0.0
-        env:
-          JAVA_HOME: /opt/java/openjdk
-          JAVA_HOME_11_X64: /opt/java/openjdk
-    
+        run: echo "version=$(mvn -q -Dexec.executable=echo -Dexec.args='${project.version}' --non-recursive exec:exec)" >> $GITHUB_OUTPUT
+        
   
       - name: "Package using Maven"
         run: mvn --batch-mode package -DjacocoAgg
