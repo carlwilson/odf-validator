@@ -23,7 +23,7 @@ jobs:
         release_details: ${{ steps.cut_release_date.outputs.substring }}
         release_version: ${{ steps.cut_release_version.outputs.substring }}
         release_timestamp: ${{ steps.release_timestamp.outputs.TIMESTAMP }}
-        release_tag: ${{ steps.release_timestamp.outputs.TAG }}
+        release_tag: ${{ steps.release_tag.outputs.TAG }}
 
     steps:
       - if: github.event.release != null
