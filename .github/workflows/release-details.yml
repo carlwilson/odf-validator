@@ -30,8 +30,8 @@ jobs:
         # If this a release event then set the release vars from the event
         name: set release vars from release event
         run: |
-          echo "TIMESTAMP=${{ github.event.release.published_at }}" >> $GITHUB_STATE
-          echo "TAG=${{ github.event.release.tag_name }}" >> $GITHUB_STATE
+          echo "TIMESTAMP=${{ github.event.release.published_at }}" >> $GITHUB_ENV
+          echo "TAG=${{ github.event.release.tag_name }}" >> $GITHUB_ENV
 
       - if: github.event.release == null
         # If this is not a release event then get the last release details
@@ -49,8 +49,8 @@ jobs:
         # and not from a release event
         name: set release vars from previous release
         run: |
-          echo "TIMESTAMP=${{ steps.previousrelease.outputs.created_at }}" >> $GITHUB_STATE
-          echo "TAG=${{ steps.previousrelease.outputs.tag_name }}" >> $GITHUB_STATE
+          echo "TIMESTAMP=${{ steps.previousrelease.outputs.created_at }}" >> $GITHUB_ENV
+          echo "TAG=${{ steps.previousrelease.outputs.tag_name }}" >> $GITHUB_ENV
 
       # Shortens the release date to just the date
       - name: "Shorten release date"
