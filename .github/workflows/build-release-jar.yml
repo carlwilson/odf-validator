@@ -12,6 +12,7 @@ jobs:
   build:
     name: "Checkout, build and publish JAR"
     runs-on: ubuntu-latest
+    needs: release_details
     steps:
       - name: "Checkout"
         uses: actions/checkout@v4
@@ -40,7 +41,7 @@ jobs:
       - name: "Publish JAR"
         uses: actions/upload-artifact@v4
         with:
-          name: "odf-validator-${{ needs.release_details.outputs.version }}-all.jar"
+          name: "odf-validator-${{ needs.release_details.outputs.release_version }}-all.jar"
           path: "odf-apps/target/odf-apps-${{ steps.pom-version.outputs.version }}-jar-with-dependencies.jar"
 
       - name: "Upload release binaries"
@@ -48,8 +49,8 @@ jobs:
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           file: '["odf-apps/target/odf-apps-${{ steps.pom-version.outputs.version }}-jar-with-dependencies.jar"]'
-          asset_name: "odf-validator-${{ needs.release_details.outputs.version }}-all.jar"
-          tag: ${{ needs.release_details.outputs.tag }}
+          asset_name: "odf-validator-${{ needs.release_details.outputs.release_version }}-all.jar"
+          tag: ${{ needs.release_details.outputs.release_tag }}
           overwrite: true
           draft: false
           prerelease: false
