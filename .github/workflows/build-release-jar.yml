@@ -1,0 +1,61 @@
+name: Build Release JAR
+
+on:
+    release:
+        types: [published]
+    workflow_dispatch:
+    
+jobs:
+  build:
+    name: Checkout and Build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: "Checkout"
+        uses: actions/checkout@v4
+      - name: "Setup Python"
+        uses: actions/setup-python@v5
+      - name: "Check Precommits"
+        uses: pre-commit/action@v3.0.1
+      - name: "JDK setup"
+        uses: actions/setup-java@v4
+        with:
+          java-version: 11
+          distribution: 'temurin'
+          cache: maven
+
+      - name: "Build with Maven"
+        run: mvn --batch-mode --update-snapshots install -DjacocoAgg
+
+      - name: "Run pre-commit tests"
+        uses: pre-commit/action@v3.0.1
+        with:
+          extra_args: --all-files --verbose
+
+      - name: "Package using Maven"
+        run: mvn --batch-mode package -DjacocoAgg
+
+      - name: "Get Maven POM version"
+        id: pom-version
+        uses: PERES-Richard/maven-get-version-action@v3.0.0
+  
+      - name: "Get release details"
+        uses: carlwilson/odf-validator/.github/workflows/release-details.yml@main
+        id: release-details
+
+      - name: "Publish JAR"
+        uses: actions/upload-artifact@v4
+        with:
+          name: "odf-validator-${{ steps.release-details.outputs.version }}-all.jar"
+          path: odf-apps/target/odf-apps-${{ steps.pom-version.outputs.version }}-jar-with-dependencies.jar
+
+      - name: "Upload release binaries"
+        uses: svenstaro/upload-release-action@v2
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: '["odf-apps/target/odf-apps-${{ steps.pom-version.outputs.version }}-jar-with-dependencies.jar"]'
+          asset_name: "odf-validator-${{ steps.release-details.outputs.version }}-all.jar"
+          tag: ${{ steps.release-details.outputs.tag }}
+          overwrite: true
+          draft: false
+          prerelease: false
