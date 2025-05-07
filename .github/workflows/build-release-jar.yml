@@ -30,24 +30,20 @@ jobs:
 
       - name: "Package using Maven"
         run: mvn --batch-mode package -DjacocoAgg
-
-      - name: "Get Maven POM version"
-        id: pom-version
-        uses: PERES-Richard/maven-get-version-action@v3.0.0
   
       - name: "Publish JAR"
         uses: actions/upload-artifact@v4
         with:
           name: "odf-validator-${{ needs.release_details.outputs.release_version }}-all.jar"
-          path: "odf-apps/target/odf-apps-${{ steps.pom-version.outputs.version }}-jar-with-dependencies.jar"
+          path: "odf-apps/target/odf-apps-*-jar-with-dependencies.jar"
 
       - name: "Upload release binaries"
         uses: svenstaro/upload-release-action@v2
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: "odf-apps/target/odf-apps-${{ steps.pom-version.outputs.version }}-jar-with-dependencies.jar"
+          file: "odf-apps/target/odf-apps-*-jar-with-dependencies.jar"
           asset_name: "odf-validator-${{ needs.release_details.outputs.release_version }}-all.jar"
-          tag: ${{ needs.release_details.outputs.release_tag }}
+          tag: "${{ needs.release_details.outputs.release_tag }}"
           overwrite: true
           draft: false
           prerelease: false
