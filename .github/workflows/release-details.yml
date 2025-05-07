@@ -20,18 +20,18 @@ jobs:
   release_details:
     runs-on: ubuntu-latest
     outputs:
-        release_details: ${{ env.DATE }}
-        release_version: ${{ env.VERSION }}
-        release_timestamp: ${{ env.TIMESTAMP }}
-        release_tag: ${{ env.TAG }}
+        release_details: ${{ steps.cut_release_date.outputs.substring }}
+        release_version: ${{ steps.cut_release_version.outputs.substring }}
+        release_timestamp: ${{ steps.release_timestamp.outputs.TIMESTAMP }}
+        release_tag: ${{ steps.release_timestamp.outputs.TAG }}
 
     steps:
       - if: github.event.release != null
         # If this a release event then set the release vars from the event
         name: set release vars from release event
         run: |
-          echo "TIMESTAMP=${{ github.event.release.published_at }}" >> $GITHUB_ENV
-          echo "TAG=${{ github.event.release.tag_name }}" >> $GITHUB_ENV
+          echo "TIMESTAMP=${{ github.event.release.published_at }}" >> $GITHUB_STATE
+          echo "TAG=${{ github.event.release.tag_name }}" >> $GITHUB_STATE
 
       - if: github.event.release == null
         # If this is not a release event then get the last release details
@@ -49,8 +49,8 @@ jobs:
         # and not from a release event
         name: set release vars from previous release
         run: |
-          echo "TIMESTAMP=${{ steps.previousrelease.outputs.created_at }}" >> $GITHUB_ENV
-          echo "TAG=${{ steps.previousrelease.outputs.tag_name }}" >> $GITHUB_ENV
+          echo "TIMESTAMP=${{ steps.previousrelease.outputs.created_at }}" >> $GITHUB_STATE
+          echo "TAG=${{ steps.previousrelease.outputs.tag_name }}" >> $GITHUB_STATE
 
       # Shortens the release date to just the date
       - name: "Shorten release date"
@@ -59,10 +59,6 @@ jobs:
         with:
           value: ${{ env.TIMESTAMP }}
           length_from_start: 10
-
-      - name: "Store the release date"
-        run: |
-            echo "DATE=${{ steps.cut_release_date.outputs.substring }}" >> $GITHUB_ENV
   
       # Remove the 'v' from the release version
       - name: "Remove 'v' from release version"
@@ -72,9 +68,13 @@ jobs:
           value: ${{ env.TAG }}
           index_of_str: "v"
 
-      - name: "Store the release date"
+      - name: "Output the release timestamp"
+        id: release_timestamp
         run: |
-          echo "TAG=${{ steps.cut_release_version.outputs.substring }}" >> $GITHUB_ENV
+            echo "TIMESTAMP=$TIMESTAMP" >> $GITHUB_OUTPUT
   
-
+      - name: "Output the release Tag"
+        id: release_tag
+        run: |
+            echo "TAG=$TAG" >> $GITHUB_OUTPUT
 
