@@ -15,10 +15,6 @@ jobs:
     steps:
       - name: "Checkout"
         uses: actions/checkout@v4
-      - name: "Setup Python"
-        uses: actions/setup-python@v5
-      - name: "Check Precommits"
-        uses: pre-commit/action@v3.0.1
       - name: "JDK setup"
         uses: actions/setup-java@v4
         with:
@@ -52,8 +48,8 @@ jobs:
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           file: '["odf-apps/target/odf-apps-${{ steps.pom-version.outputs.version }}-jar-with-dependencies.jar"]'
-          asset_name: "odf-validator-${{ steps.release-details.outputs.version }}-all.jar"
-          tag: ${{ steps.release-details.outputs.tag }}
+          asset_name: "odf-validator-${{ needs.release_details.outputs.version }}-all.jar"
+          tag: ${{ needs.release_details.outputs.tag }}
           overwrite: true
           draft: false
           prerelease: false
