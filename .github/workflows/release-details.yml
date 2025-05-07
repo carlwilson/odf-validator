@@ -1,0 +1,67 @@
+name: Get release details
+
+on:
+  workflow_call:
+    outputs:
+      release_date:
+        description: "Release date only with timestamp removed"
+        value: ${{ steps.cut_release_date.outputs.substring }}
+      release_version:
+        description: "Last release version with 'v' removed"
+        value: ${{ steps.cut_release_version.outputs.substring }}
+      release_timestamp:
+        description: "Release date with full timestamp information"
+        value: ${{ env.LONG_DATE }}
+      release_tag:
+        description: "Last release tag"
+        value: ${{ steps.cut_release_version.outputs.substring }}
+
+jobs:
+  reusable_workflow_job:
+    runs-on: ubuntu-latest
+    steps:
+  
+      - if: github.event.release != null
+        # If this a release event then set the release vars from the event
+        name: set release vars from release event
+        run: |
+          echo "LONG_DATE=${{ github.event.release.published_at }}" >> $GITHUB_ENV
+          echo "LONG_VERSION=${{ github.event.release.tag_name }}" >> $GITHUB_ENV
+
+      - if: github.event.release == null
+        # If this is not a release event then get the last release details
+        name: Get previous release
+        id: previousrelease
+        uses: InsonusK/get-latest-release@v1.0.1
+        with:
+          myToken: ${{ github.token }}
+          exclude_types: draft|prerelease
+          view_top: 1
+
+      - if: github.event.release == null
+        # Use the last release details to set the release vars
+        # This is used for the case when this workflow is called from another workflow
+        # and not from a release event
+        name: set release vars from previous release
+        run: |
+          echo "LONG_DATE=${{ steps.previousrelease.outputs.created_at }}" >> $GITHUB_ENV
+          echo "LONG_VERSION=${{ steps.previousrelease.outputs.tag_name }}" >> $GITHUB_ENV
+
+      # Shortens the release date to just the date
+      - name: "Shorten release date"
+        uses: bhowell2/github-substring-action@1.0.2
+        id: cut_release_date
+        with:
+          value: ${{ env.LONG_DATE }}
+          length_from_start: 10
+
+      # Remove the 'v' from the release version
+      - name: "Remove 'v' from release version"
+        uses: bhowell2/github-substring-action@1.0.2
+        id: cut_release_version
+        with:
+          value: ${{ env.LONG_VERSION }}
+          index_of_str: "v"
+
+
+

@@ -8,7 +8,7 @@ jobs:
   build:
     strategy:
       matrix:
-        os: [windows-latest, ubuntu-latest]
+        os: [windows-latest, ubuntu-latest, macos-latest]
         java-version: [11, 17]
 
     name: Checkout and Build
@@ -38,4 +38,7 @@ jobs:
         run: mvn --batch-mode package -DjacocoAgg && ./odf-validator.bat --version
       - name: Test build package on Ubuntu
         if: (matrix.os == 'ubuntu-latest')
+        run: mvn --batch-mode package -DjacocoAgg && ./odf-validator --version
+      - name: Test build package on MacOS
+        if: (matrix.os == 'macos-latest')
         run: mvn --batch-mode package -DjacocoAgg && ./odf-validator --version
