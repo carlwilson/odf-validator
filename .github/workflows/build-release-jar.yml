@@ -6,11 +6,12 @@ on:
     workflow_dispatch:
 
 jobs:
+  release_details:
+    uses: carlwilson/odf-validator/.github/workflows/release-details.yml@main
 
   build:
     name: "Checkout, build and publish JAR"
     runs-on: ubuntu-latest
-
     steps:
       - name: "Checkout"
         uses: actions/checkout@v4
@@ -43,7 +44,7 @@ jobs:
       - name: "Publish JAR"
         uses: actions/upload-artifact@v4
         with:
-          name: "odf-validator-${{ steps.release-details.outputs.version }}-all.jar"
+          name: "odf-validator-${{ needs.release_details.outputs.version }}-all.jar"
           path: odf-apps/target/odf-apps-${{ steps.pom-version.outputs.version }}-jar-with-dependencies.jar
 
       - name: "Upload release binaries"
@@ -56,6 +57,3 @@ jobs:
           overwrite: true
           draft: false
           prerelease: false
-
-  get_release_details:
-    uses: carlwilson/odf-validator/.github/workflows/release-details.yml@main
