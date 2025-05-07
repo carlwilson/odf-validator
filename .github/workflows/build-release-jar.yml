@@ -28,6 +28,14 @@ jobs:
         with:
           extra_args: --all-files --verbose
 
+      - name: "Get Maven POM version"
+        id: pom-version
+        uses: PERES-Richard/maven-get-version-action@v3.0.0
+        env:
+          JAVA_HOME: $JAVA_HOME
+          JAVA_HOME_11_X64: $JAVA_HOME_11_X64
+    
+  
       - name: "Package using Maven"
         run: mvn --batch-mode package -DjacocoAgg
   
