@@ -20,18 +20,10 @@ jobs:
   release_details:
     runs-on: ubuntu-latest
     outputs:
-        release_details:
-          description: "Release date only with timestamp removed"
-          value: ${{ env.DATE }}
-        release_version:
-          description: "Last release version with 'v' removed"
-          value: ${{ env.VERSION }}
-        release_timestamp:
-          description: "Release date with full timestamp information"
-          value: ${{ env.TIMESTAMP }}
-        release_tag:
-          description: "Last release tag"
-          value: ${{ env.TAG }}
+        release_details: ${{ env.DATE }}
+        release_version: ${{ env.VERSION }}
+        release_timestamp: ${{ env.TIMESTAMP }}
+        release_tag: ${{ env.TAG }}
 
     steps:
       - if: github.event.release != null
