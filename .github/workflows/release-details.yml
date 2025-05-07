@@ -5,19 +5,19 @@ on:
     outputs:
       release_date:
         description: "Release date only with timestamp removed"
-        value: ${{ steps.cut_release_date.outputs.substring }}
+        value: ${{ env.DATE }}
       release_version:
         description: "Last release version with 'v' removed"
-        value: ${{ steps.cut_release_version.outputs.substring }}
+        value: ${{ env.VERSION }}
       release_timestamp:
         description: "Release date with full timestamp information"
-        value: ${{ env.LONG_DATE }}
+        value: ${{ env.TIMESTAMP }}
       release_tag:
         description: "Last release tag"
-        value: ${{ steps.cut_release_version.outputs.substring }}
+        value: ${{ env.TAG }}
 
 jobs:
-  reusable_workflow_job:
+  release_details:
     runs-on: ubuntu-latest
     steps:
   
@@ -25,8 +25,8 @@ jobs:
         # If this a release event then set the release vars from the event
         name: set release vars from release event
         run: |
-          echo "LONG_DATE=${{ github.event.release.published_at }}" >> $GITHUB_ENV
-          echo "LONG_VERSION=${{ github.event.release.tag_name }}" >> $GITHUB_ENV
+          echo "TIMESTAMP=${{ github.event.release.published_at }}" >> $GITHUB_ENV
+          echo "TAG=${{ github.event.release.tag_name }}" >> $GITHUB_ENV
 
       - if: github.event.release == null
         # If this is not a release event then get the last release details
@@ -44,24 +44,32 @@ jobs:
         # and not from a release event
         name: set release vars from previous release
         run: |
-          echo "LONG_DATE=${{ steps.previousrelease.outputs.created_at }}" >> $GITHUB_ENV
-          echo "LONG_VERSION=${{ steps.previousrelease.outputs.tag_name }}" >> $GITHUB_ENV
+          echo "TIMESTAMP=${{ steps.previousrelease.outputs.created_at }}" >> $GITHUB_ENV
+          echo "TAG=${{ steps.previousrelease.outputs.tag_name }}" >> $GITHUB_ENV
 
       # Shortens the release date to just the date
       - name: "Shorten release date"
         uses: bhowell2/github-substring-action@1.0.2
         id: cut_release_date
         with:
-          value: ${{ env.LONG_DATE }}
+          value: ${{ env.TIMESTAMP }}
           length_from_start: 10
 
+      - name: "Store the release date"
+        run: |
+            echo "DATE=${{ steps.cut_release_version.outputs.substring }}" >> $GITHUB_ENV
+  
       # Remove the 'v' from the release version
       - name: "Remove 'v' from release version"
         uses: bhowell2/github-substring-action@1.0.2
         id: cut_release_version
         with:
-          value: ${{ env.LONG_VERSION }}
+          value: ${{ env.TAG }}
           index_of_str: "v"
 
+      - name: "Store the release date"
+        run: |
+          echo "TAG=${{ steps.cut_release_version.outputs.substring }}" >> $GITHUB_ENV
+  
 
 
