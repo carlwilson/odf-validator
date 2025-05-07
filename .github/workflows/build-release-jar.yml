@@ -1,13 +1,14 @@
-name: Build Release JAR
+name: Publish Release JAR
 
 on:
     release:
         types: [published]
     workflow_dispatch:
-    
+
 jobs:
+
   build:
-    name: Checkout and Build
+    name: "Checkout, build and publish JAR"
     runs-on: ubuntu-latest
 
     steps:
@@ -39,10 +40,6 @@ jobs:
         id: pom-version
         uses: PERES-Richard/maven-get-version-action@v3.0.0
   
-      - name: "Get release details"
-        uses: carlwilson/odf-validator/.github/workflows/release-details.yml@main
-        id: release-details
-
       - name: "Publish JAR"
         uses: actions/upload-artifact@v4
         with:
@@ -59,3 +56,6 @@ jobs:
           overwrite: true
           draft: false
           prerelease: false
+
+  get_release_details:
+    uses: carlwilson/odf-validator/.github/workflows/release-details.yml@main
