@@ -2,7 +2,7 @@ name: "Build Non-Windows images"
 # author: Carl Wilson <carl_AT_openpreservation.org>
 
 on:
-  workflow_call:
+  workflow_dispatch:
     inputs:
       release_version:
         description: "Release version"
