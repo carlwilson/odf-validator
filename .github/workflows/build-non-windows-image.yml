@@ -55,7 +55,7 @@ jobs:
 
     - name: 'Build Native Image'
       run: |
-        native-image --no-server --no-fallback -H:IncludeResources=*/*.rng -H:IncludeResources=*/*.sch -H:IncludeResources=*/*.xsd -H:IncludeResources=*/*.dtd -H:IncludeResources=*/*.properties --allow-incomplete-classpath -jar odf-apps-${{ steps.pom-version.outputs.version }}-jar-with-dependencies.jar -H:Name=odf-validator-${{ inputs.release_version }}-all -H:Class=org.openpreservation.odf.apps.CliValidator
+        native-image --no-server --no-fallback -H:IncludeResources=.*/.*rng$ -H:IncludeResources=.*/.*sch$ -H:IncludeResources=.*/.*xsd$ -H:IncludeResources=.*/.*dtd$ -H:IncludeResources=.*/.*properties$ --allow-incomplete-classpath -jar odf-apps-${{ steps.pom-version.outputs.version }}-jar-with-dependencies.jar -H:Name=odf-validator-${{ inputs.release_version }}-all -H:Class=org.openpreservation.odf.apps.CliValidator
 
     - name: 'Publish Native Image'
       if: success()
