@@ -49,12 +49,13 @@ jobs:
       with:
         name: 'odf-validator-${{ inputs.release_version }}-all.jar'
 
+    - name: "Get Maven POM version"
+      id: pom-version
+      run: echo "version=$(mvn -q -Dexec.executable=echo -Dexec.args='${project.version}' --non-recursive exec:exec)" >> $GITHUB_OUTPUT
+
     - name: 'Build Native Image'
       run: |
-        pwd
-        ls -alh .
-        ls -alh ${{ steps.get_jar_artifact.outputs.download-path }}
-        native-image --no-server --no-fallback -H:ReflectionConfigurationResources=reflection-config.json -H:IncludeResources=logback.xml --allow-incomplete-classpath -jar ${{ steps.get_jar_artifact.outputs.download-path }}/odf-validator-${{ inputs.release_version }}-all.jar -H:Name=odf-validator-${{ inputs.release_version }}-all -H:Class=uk.org.open
+        native-image --no-server --no-fallback -H:ReflectionConfigurationResources=reflection-config.json -H:IncludeResources=logback.xml --allow-incomplete-classpath -jar odf-apps-${{ steps.pom-version.outputs.version }}-jar-with-dependencies.jar -H:Name=odf-validator-${{ inputs.release_version }}-all -H:Class=uk.org.open
 
     - name: 'Publish Native Image'
       if: success()
