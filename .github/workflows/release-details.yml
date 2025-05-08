@@ -1,4 +1,9 @@
 name: Get release details
+author: Carl Wilson <carl_AT_openpreservation.org>
+description: |
+  This workflow gets the release details from the event or the last release
+  and sets them as outputs. It is used by other workflows to get the release
+  details without having to repeat the code in each workflow.
 
 on:
   workflow_call:
