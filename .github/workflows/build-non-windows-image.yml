@@ -45,12 +45,13 @@ jobs:
 
     - name: 'Get JAR Artifact'
       uses: actions/download-artifact@v4
+      id: get_jar_artifact
       with:
         name: 'odf-validator-${{ inputs.release_version }}-all.jar'
 
     - name: 'Build Native Image'
       run: |
-        native-image --no-server --no-fallback -H:ReflectionConfigurationResources=reflection-config.json -H:IncludeResources=logback.xml --allow-incomplete-classpath -jar odf-validator-${{ inputs.release_version }}-all.jar
+        native-image --no-server --no-fallback -H:ReflectionConfigurationResources=reflection-config.json -H:IncludeResources=logback.xml --allow-incomplete-classpath -jar ${{ steps.get_jar_artifact.outputs.download-path }} -H:Name=odf-validator-${{ inputs.release_version }}-all -H:Class=uk.org.open
 
     - name: 'Publish Native Image'
       if: success()

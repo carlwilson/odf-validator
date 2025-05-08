@@ -1,4 +1,4 @@
-name: Publish Release JAR
+name: "Publish Release Artifacts"
 
 on:
     release:
