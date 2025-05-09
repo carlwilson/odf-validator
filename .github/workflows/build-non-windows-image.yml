@@ -1,4 +1,4 @@
-name: "Build Non-Windows images"
+name: "Native Images"
 # author: Carl Wilson <carl_AT_openpreservation.org>
 
 on:
@@ -12,9 +12,13 @@ on:
         description: "Release tag"
         required: true
         type: string
+      pom_version:
+        description: "POM version"
+        required: true
+        type: string
 jobs:
   build:
-    name: "Build Non-Windows image"
+    name: "Build and Publish Native Images"
     strategy:
       matrix:
         os: [ubuntu-latest, macos-latest, windows-latest]
@@ -43,10 +47,6 @@ jobs:
       with:
         name: 'odf-validator-${{ inputs.release_version }}-all.jar'
 
-    - name: "Get Maven POM version"
-      id: pom-version
-      run: echo "version=$(mvn -q -Dexec.executable=echo -Dexec.args='${project.version}' --non-recursive exec:exec)" >> $GITHUB_OUTPUT
-
     - name: 'Build Native Image'
       run: |
         native-image --no-fallback \
@@ -54,7 +54,7 @@ jobs:
         -H:ReflectionConfigurationFiles=native-image/config/reflect-config.json \
         -H:JNIConfigurationFiles=native-image/config/jni-config.json \
         -H:Class=org.openpreservation.odf.apps.CliValidator \
-        -jar odf-apps-${{ steps.pom-version.outputs.version }}-jar-with-dependencies.jar \
+        -jar odf-apps-${{ inputs.pom_version }}-jar-with-dependencies.jar \
         -H:Name=odf-validator-${{ inputs.release_version }}-all
 
     - name: 'Publish Native Image'
