@@ -37,11 +37,12 @@ jobs:
     - name: 'Setup GraalVM Environment'
       uses: DeLaGuardo/setup-graalvm@5.0
       with:
-        graalvm-version: 'jdk-17.0.9'
+        graalvm: '22.0.0'
+        java: 'java17'
 
     - name: 'Install Native Image Plugin'
       run: |
-        gu.cmd install native-image
+        gu install native-image
 
     - name: 'Get JAR Artifact'
       uses: actions/download-artifact@v4
