@@ -50,6 +50,8 @@ jobs:
     - name: 'Build Native Image'
       run: |
         mvn -Pnative package
+        ls -alh
+        ls -alh odf-apps/target
         # native-image --no-fallback \
         # -H:ResourceConfigurationFiles=native-image/config/resource-config.json \
         # -H:ReflectionConfigurationFiles=native-image/config/reflect-config.json \
