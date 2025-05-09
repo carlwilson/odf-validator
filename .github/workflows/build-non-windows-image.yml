@@ -41,7 +41,7 @@ jobs:
 
     - name: 'Install Native Image Plugin'
       run: |
-        gu install native-image
+        gu.cmd install native-image
 
     - name: 'Get JAR Artifact'
       uses: actions/download-artifact@v4
