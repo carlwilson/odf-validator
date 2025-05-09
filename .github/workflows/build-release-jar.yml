@@ -13,6 +13,10 @@ jobs:
     name: "Checkout, build and publish JAR"
     runs-on: ubuntu-latest
     needs: release_details
+    outputs:
+      release_version: ${{ needs.release_details.outputs.release_version }}
+      release_tag: ${{ needs.release_details.outputs.release_tag }}
+      pom_version: ${{ steps.pom-version.outputs.version }}
     steps:
       - name: "Checkout"
         uses: actions/checkout@v4
@@ -54,14 +58,9 @@ jobs:
           prerelease: false
 
   publish_non_windows:
-    needs: [release_details, build]
-    runs-on: ubuntu-latest
-    steps:
-      - name: "Get Maven POM version"
-        id: pom-version
-        run: echo "version=$(mvn -q -Dexec.executable=echo -Dexec.args='${project.version}' --non-recursive exec:exec)" >> $GITHUB_OUTPUT
-      - uses: carlwilson/odf-validator/.github/workflows/build-non-windows-image.yml@main
-        with:
-          release_version: ${{ needs.release_details.outputs.release_version }}
-          release_tag: ${{ needs.release_details.outputs.release_tag }}
-          pom_version: ${{ steps.pom-version.outputs.version }}
+    needs: [build]
+    uses: carlwilson/odf-validator/.github/workflows/build-non-windows-image.yml@main
+    with:
+      release_version: ${{ needs.build.outputs.release_version }}
+      release_tag: ${{ needs.build.outputs.release_tag }}
+      pom_version: ${{ needs.build.outputs.pom_version }}
