@@ -55,7 +55,8 @@ jobs:
 
     - name: 'Build Native Image'
       run: |
-        native-image \
+        native-image --no-server --no-fallback \
+        --allow-incomplete-classpath \
         -H:ResourceConfigurationFiles=native-image/config/resource-config.json \
         -H:ReflectionConfigurationFiles=native-image/config/reflect-config.json \
         -H:JNIConfigurationFiles=native-image/config/jni-config.json \
