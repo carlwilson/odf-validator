@@ -47,14 +47,13 @@ jobs:
 
     - name: 'Build Native Image'
       run: |
-        native-image --no-server --no-fallback \
-        --allow-incomplete-classpath \
+        native-image --no-fallback \
         -H:ResourceConfigurationFiles=native-image/config/resource-config.json \
         -H:ReflectionConfigurationFiles=native-image/config/reflect-config.json \
         -H:JNIConfigurationFiles=native-image/config/jni-config.json \
-        -H:Name=odf-validator-${{ inputs.release_version }}-all \
         -H:Class=org.openpreservation.odf.apps.CliValidator \
-        -jar odf-apps-${{ steps.pom-version.outputs.version }}-jar-with-dependencies.jar
+        -jar odf-apps-${{ steps.pom-version.outputs.version }}-jar-with-dependencies.jar \
+        -H:Name=odf-validator-${{ inputs.release_version }}-all
 
     - name: 'Publish Native Image'
       if: success()
