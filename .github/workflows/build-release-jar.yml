@@ -55,7 +55,13 @@ jobs:
 
   publish_non_windows:
     needs: [release_details, build]
-    uses: carlwilson/odf-validator/.github/workflows/build-non-windows-image.yml@main
-    with:
-      release_version: ${{ needs.release_details.outputs.release_version }}
-      release_tag: ${{ needs.release_details.outputs.release_tag }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: "Get Maven POM version"
+        id: pom-version
+        run: echo "version=$(mvn -q -Dexec.executable=echo -Dexec.args='${project.version}' --non-recursive exec:exec)" >> $GITHUB_OUTPUT
+      - uses: carlwilson/odf-validator/.github/workflows/build-non-windows-image.yml@main
+        with:
+          release_version: ${{ needs.release_details.outputs.release_version }}
+          release_tag: ${{ needs.release_details.outputs.release_tag }}
+          pom_version: ${{ steps.pom-version.outputs.version }}
